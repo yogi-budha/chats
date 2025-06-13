@@ -1,6 +1,6 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose from "mongoose"
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     fullname:{
         type:String,
         required:true
@@ -16,11 +16,14 @@ const userSchema = new Schema({
     },
     profilePic:{
         type:String,
+        default:"",
         required:true
     },
     gender:{
         type:String,
-        enum:["male","femal"],
+        enum:["male","female"],
         required:true
     },
-})
+},{timestamps:true})
+
+export const User = mongoose.model("user",userSchema)
