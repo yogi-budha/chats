@@ -58,7 +58,7 @@ export const loginController = async (req,res)=>{
         },process.env.JWT_SECREAT)
 
         return res.status(200).cookie(  
-            "token",token).json({success:true,message:"login successfully",user})
+            "token",token,{ httpOnly: true, sameSite: "Strict", maxAge: 24 * 60 * 60 * 1000 }).json({success:true,message:"login successfully",user})
         
     } catch (error) {
         console.log(error)
@@ -68,7 +68,7 @@ export const loginController = async (req,res)=>{
 
 export const logoutController = async (req,res)=>{
     try {
-        return res.status(200).cookie("token","",).json({success:true,message:"logout Successfully"})
+        return res.status(200).cookie("token","",{maxAge:0}).json({success:true,message:"logout Successfully"})
     } catch (error) {
         console.log(error)
         

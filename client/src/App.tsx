@@ -1,27 +1,21 @@
+import { Route, Routes } from "react-router-dom"
+import Home from "./pages/Home"
+import Register from "./pages/Register"
+import Login from "./pages/Login"
 
-import { useEffect } from 'react';
-import './App.css'
-import { io } from "socket.io-client";
 
 function App() {
 
-  useEffect(()=>{
-    const newSocket = io("http://localhost:8800",{
-      transports:['websocket','polling']
-    })
-
-    newSocket.on("connect",()=>{
-      console.log("Connecterd to socket.IO server",newSocket.id)
-    })
-  },[])
 
   return (
 
-    <>
-
-    <h1>Hello form Client</h1>
+    <Routes>
+      <Route path="/" element=<Home/> />
+      <Route path="/register" element=<Register/> />
+      <Route path="/login" element=<Login/> />
+    
   
-    </>
+    </Routes>
   )
 }
 
