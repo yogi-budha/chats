@@ -1,8 +1,12 @@
-import React from 'react'
+import Sidebar from '../components/SideBar'
+import ChatWindow from '../components/ChatWindow'
 
-function Home() {
+const Home = () => {
   return (
-    <div>Home</div>
+      <div className="flex h-screen bg-[#EDE9FE]">
+      <Sidebar />
+      <ChatWindow />
+    </div>
   )
 }
 

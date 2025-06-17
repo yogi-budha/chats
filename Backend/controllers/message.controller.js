@@ -5,47 +5,53 @@ export const sendMessageController = async (req, res) => {
   try {
     const senderId = req.id;
     const receiverId = req.params.id;
-    const message = req.body
+    const { message } = req.body;
 
     let getConversatation = await Conversatation.findOne({
-        participents:{$all:[senderId,receiverId]}
-    })
+      participents: { $all: [senderId, receiverId] },
+    });
 
+    if (!getConversatation) {
+      getConversatation = await Conversatation.create({
+        participents: [senderId, receiverId],
+      });
+    }
+    const newmessage = await Message.create({ senderId, receiverId, message });
 
-    if(!getConversatation){
-        getConversatation = await Conversatation.create({
-            participents:[senderId,receiverId]
-        })
+    if (newmessage) {
+      getConversatation.messages.push(newmessage._id);
     }
 
-   const newmessage =  await Message.create({senderId,receiverId,message:message.message})
-   
+    await getConversatation.save();
 
-
-   if(newmessage){
-
-       getConversatation.messages.push(newmessage._id)
-   }
-
-   await getConversatation.save()
-
-   return res.status(200).json({message:"successfully created the message"})
-
-
+    return res
+      .status(200)
+      .json({ message: "successfully created the message" });
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getMessagesController = async (req,res)=>{
-    try {
-        const senderId = req.id
-        const recieverId = req.params.id
+export const getMessagesController = async (req, res) => {
+  try {
+    const senderId = req.id;
+    const recieverId = req.params.id;
 
-        const getMessagesAll = await Conversatation.findOne({participents:{$all:[senderId,recieverId]}}).populate("messages")
-
-        res.status(200).json({message:"successfully get all message",getMessagesAll:getMessagesAll.messages})
-    } catch (error) {
-        console.log(error)
+    if (!senderId || !recieverId) {
+      return res.status(400).json({ message: "All fields are required" });
     }
-}
+
+    const getMessagesAll = await Conversatation.findOne({
+      participents: { $all: [senderId, recieverId] },
+    }).populate("messages");
+
+    res
+      .status(200)
+      .json({
+        message: "successfully get all message",
+        getMessagesAll: getMessagesAll?.messages,
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -1,6 +1,6 @@
 import { User } from "../models/usermodel.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
 export const registerController = async (req, res) => {
   try {
@@ -35,55 +35,63 @@ export const registerController = async (req, res) => {
   }
 };
 
+export const loginController = async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-export const loginController = async (req,res)=>{
-    try {
-        const {username,password} = req.body
-
-        if(!username || !password){
-            return res.status(400).json({message:"All fields are required"})
-        }
-        const user = await User.findOne({username})
-        if(!user){
-            return res.status(400).json({message:"Invalid creditials"})
-        }
-
-        const isMatched = await bcrypt.compare(password,user.password)
-        if(!isMatched){
-            return res.status(400).json({message:"Invalid creditials"})
-        }
-       
-        const token = await jwt.sign({  
-            userId : user.id
-        },process.env.JWT_SECREAT)
-
-        return res.status(200).cookie(  
-            "token",token,{ httpOnly: true, sameSite: "Strict", maxAge: 24 * 60 * 60 * 1000 }).json({success:true,message:"login successfully",user})
-        
-    } catch (error) {
-        console.log(error)
-        
+    if (!username || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
-}
-
-export const logoutController = async (req,res)=>{
-    try {
-        return res.status(200).cookie("token","",{maxAge:0}).json({success:true,message:"logout Successfully"})
-    } catch (error) {
-        console.log(error)
-        
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ success:false , message: "Invalid creditials" });
     }
-}
 
-export const getAllOtherUserController = async (req,res)=>{
-    try {
-        const loginuserId = req.id
-        const otherUser = await User.find({_id:{$ne:loginuserId}})
-
-        return res.status(200).json({"message":'successfully get the otherUser',otherUser})
-        
-    } catch (error) {
-        console.log(error)
-        
+    const isMatched = await bcrypt.compare(password, user.password);
+    if (!isMatched) {
+      return res.status(400).json({ success:false ,message: "Invalid creditials" });
     }
-}
+
+    const token = await jwt.sign(
+      {
+        userId: user.id,
+      },
+      process.env.JWT_SECREAT
+    );
+    return res
+      .status(200)
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false, 
+        sameSite: "lax",
+        maxAge: 60 * 60 * 1000, 
+      })
+      .json({ success: true, message: "login successfully", user, token });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const logoutController = async (req, res) => {
+  try {
+    return res
+      .status(200)
+      .cookie("token", "", { maxAge: 0 })
+      .json({ success: true, message: "logout Successfully" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllOtherUserController = async (req, res) => {
+  try {
+    const loginuserId = req.id;
+    const otherUser = await User.find({ _id: { $ne: loginuserId } });
+
+    return res
+      .status(200)
+      .json({ message: "successfully get the otherUser", otherUser });
+  } catch (error) {
+    console.log(error);
+  }
+};

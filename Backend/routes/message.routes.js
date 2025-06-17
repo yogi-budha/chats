@@ -4,6 +4,6 @@ import { isAuth } from "../middleware/isAuth.js"
 
 const routes  = express.Router()
 
-routes.post("/sendMessage/:id",isAuth,sendMessageController).post("/getMessages/:id",isAuth,getMessagesController)
+routes.post("/sendMessage/:id",isAuth,sendMessageController).get("/getMessages/:id",isAuth,getMessagesController)
 
 export default routes

@@ -1,12 +1,16 @@
 import React from 'react';
 
-interface ChatBubbleProps {
-  text: string;
-  sender: 'me' | 'other';
-  time: string;
-}
 
-export default function ChatBubble({ text, sender, time }: ChatBubbleProps){
+export default function ChatBubble({ text, sender, createdAt }){
+
+  const data = new Date(createdAt)
+
+  const time = data.toLocaleTimeString([],{
+    hour:"2-digit",
+    minute:"2-digit",
+    hour12:true
+  })
+  
   const isMe = sender === 'me';
   return (
     <div className={`flex ${isMe ? 'justify-start' : 'justify-end'}`}>

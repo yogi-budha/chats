@@ -9,9 +9,6 @@ import cors from "cors"
 
 const app = express()
 
-const targetCors = {
-    origin:"http://localhost:5173"
-}
 
 
 

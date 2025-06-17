@@ -7,10 +7,14 @@ import Login from "./pages/Login"
 
 function App() {
 
+  const token = localStorage.getItem("token");
+
+  
+
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home/>}/>
+        <Route path="/" element={token=="undefined"||token===null?<Login/>:<Home/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route path="/login" element={<Login/>}/>
       </Routes>

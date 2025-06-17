@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useLoginUserMutation } from '../redux/services/userApi';
 import toast from 'react-hot-toast';
+import { useGetfriendsQuery } from '../redux/services/messageApi';
 
 function Login() {
       const [userData,setUserData] = useState({
@@ -11,17 +12,22 @@ function Login() {
   const navigate = useNavigate()
 
   const [loginUser] = useLoginUserMutation();
+  const {refetch} = useGetfriendsQuery()
 
   const onSubmithandler = async (e) => {
     e.preventDefault();
     const res = await loginUser(userData);
-    try {
+    await refetch()
+
+    if(res.data?.success === true){
       toast.success(res?.data?.message);
-      navigate("/")
-    } catch (error) {
-      console.log(error);
+      navigate("/" ,{ replace: true })
+      localStorage.setItem("token",res?.data?.token)
+      
+    }else{
       toast.error(res?.error?.data?.message);
     }
+    
   };
 
  return (
